@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -eu;
+
+if [[ $# -lt 1 ]]; then
+  SCRIPT_NAME=`basename "$0"`
+	echo "${SCRIPT_NAME} <file template path> [<installation name>]"
+	exit 1
+fi
+
+TEMPLATE_PATH="${1}"
+
+if [[ $# -lt 2 ]]; then
+  TEMPLATE_INSTALLATION_NAME="$(basename "${TEMPLATE_PATH}")"
+else
+  TEMPLATE_INSTALLATION_NAME="${2}"
+fi
+
+function update_symlink() {
+	if [[ $# -lt 2 ]]; then
+		echo "${FUNCNAME} <target> <symlink>"
+		return 1
+	fi
+  TARGET="${1}"
+  SYMLINK="${2}"
+  if [ -L "${SYMLINK}" ]; then
+    rm -v "${SYMLINK}"
+  fi
+  ln -fsv "${TARGET}" "${SYMLINK}"
+}
+
+function absolute_path() {
+  ruby -e "print File.absolute_path '${1}'"
+}
+ABSOLUTE_TEMPLATE_PATH="$(absolute_path "${TEMPLATE_PATH}")"
+
+ACTIVE_DEVELOPER_DIRECTORY="$(xcode-select -p)"
+FILE_TEMPLATES_DIRECTORY="${ACTIVE_DEVELOPER_DIRECTORY}/Platforms/iPhoneOS.platform/Developer/Library/Xcode/Templates/File Templates"
+SOURCE_TEMPLATES_DIRECTORY="${FILE_TEMPLATES_DIRECTORY}/Source"
+
+update_symlink "${ABSOLUTE_TEMPLATE_PATH}" "${SOURCE_TEMPLATES_DIRECTORY}/${TEMPLATE_INSTALLATION_NAME}"
