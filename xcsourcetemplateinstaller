@@ -4,8 +4,8 @@ set -eu;
 
 if [[ $# -lt 1 ]]; then
   SCRIPT_NAME=`basename "$0"`
-	echo "${SCRIPT_NAME} <file template path> [<installation name>]"
-	exit 1
+  echo "${SCRIPT_NAME} <file template path> [<installation name>]"
+  exit 1
 fi
 
 TEMPLATE_PATH="${1}"
@@ -17,10 +17,10 @@ else
 fi
 
 function update_symlink() {
-	if [[ $# -lt 2 ]]; then
-		echo "${FUNCNAME} <target> <symlink>"
-		return 1
-	fi
+  if [[ $# -lt 2 ]]; then
+    echo "${FUNCNAME} <target> <symlink>"
+    return 1
+  fi
   TARGET="${1}"
   SYMLINK="${2}"
   if [ -L "${SYMLINK}" ]; then
